@@ -39,15 +39,17 @@ object Server extends App {
 
           // query parsed successfully, time to execute it!
           case Success(queryAst) ⇒
-            complete(Executor.execute(SchemaDefinition.StarWarsSchema, queryAst, new CharacterRepo,
-                variables = vars,
-                operationName = operation,
-                deferredResolver = DeferredResolver.fetchers(SchemaDefinition.characters))
-              .map(OK → _)
-              .recover {
-                case error: QueryAnalysisError ⇒ BadRequest → error.resolveError
-                case error: ErrorWithResolver ⇒ InternalServerError → error.resolveError
-              })
+            complete(Executor.execute(
+              prismic.schema.PrismicSchema,
+              queryAst,
+              new prismic.data.Repository,
+              variables = vars,
+              operationName = operation,
+              deferredResolver = DeferredResolver.fetchers(prismic.schema.blogposts)
+            ).map(OK → _).recover {
+              case error: QueryAnalysisError ⇒ BadRequest → error.resolveError
+              case error: ErrorWithResolver ⇒ InternalServerError → error.resolveError
+            })
 
           // can't parse GraphQL query, return error
           case Failure(error) ⇒
