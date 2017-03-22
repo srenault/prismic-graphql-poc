@@ -51,7 +51,9 @@ object schema {
       )
     )
 
-  val UID = Argument("id", StringType, description = "uid of the blog post")
+  val UID = Argument("uid", StringType, description = "uid of the blog post")
+
+  val UID2 = Argument("uid2", StringType, description = "uid2 of the blog post")
 
   val Query =
     ObjectType(
@@ -62,6 +64,12 @@ object schema {
           OptionType(BlogPost),
           arguments = UID :: Nil,
           resolve = ctx => ctx.ctx.getBlogPost(ctx arg UID).get
+        ),
+        Field(
+          "blogPost1",
+          OptionType(BlogPost),
+          arguments = UID2 :: Nil,
+          resolve = ctx => ctx.ctx.getBlogPost(ctx arg UID2).get
         )
       )
     )
